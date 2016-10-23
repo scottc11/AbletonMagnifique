@@ -2,14 +2,20 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    live.setup();
+    
+    ofBackground(0, 0, 0);
+    HEIGHT = ofGetWindowHeight();
+    WIDTH = ofGetWindowWidth();
     
     // ABLETON LIVE ADD-ON
+    live.setup();
     
     // live.printAll();
     int numTracks = live.getNumTracks();
     // ofxAbletonLiveTrack *track = live.getTrack(1);
     
+    
+
     
     // setting the tempo
     live.setTempo(132);
@@ -22,17 +28,19 @@ void ofApp::setup(){
     soundStream.printDeviceList();
     
     soundStream.setDeviceID(4);  // setting the audio device to an index of deviceList
+    bufferSize = 512; // init a buffer size
+    soundStream.setup(this, 0, 2, 48000, bufferSize, 4);
     
-    soundStream.setup(this, 0, 2, 48000, 512, 4);
     
+    // this code is from the audioIn example and is needed for app to work
     
-    // this code is from the audioIn example
-    // and is needed for app to work
-    int bufferSize = 512;
     
     left.assign(bufferSize, 0.0);
     right.assign(bufferSize, 0.0);
-    
+    bufferCounter = 0;
+    drawCounter	= 0;
+    volume = 0.0;
+    scaledVol = 0.0;
     
     std::cout << "ABLETON " << endl;
     std::cout << "tempo: " << tempo << endl;
@@ -51,16 +59,42 @@ void ofApp::update(){
     live.update();
     scaledVol = ofMap(volume, 0.0, 0.17, 0.0, 1.0, true);
     
+    // record the volume into an array
+    volHistory.push_back( scaledVol );
+    
+    // if volHistory is bigger than the size we want to record - drop the oldest value
+    if( volHistory.size() >= 400 ){
+        volHistory.erase(volHistory.begin(), volHistory.begin()+1);
+    }
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     // draw the average volume:
-    ofDrawBitmapString("Current volume of left and right channels combined: " + ofToString(scaledVol * 100.0, 0), 4, 18);
+    
     
     ofSetColor(245, 58, 135);
     ofFill();
-    ofDrawCircle(200, 200, scaledVol * 190.0f);
+    ofDrawCircle(WIDTH/2, HEIGHT/2, scaledVol * 190.0f);
+    
+    // draw the volume history as a graph
+    ofBeginShape();
+    for (unsigned int i = 0; i < volHistory.size(); i++){
+        if( i == 0 ) ofVertex(i, 400);
+        
+        ofVertex(i, 400 - volHistory[i] * 70);
+        
+        if( i == volHistory.size() -1 ) ofVertex(i, 400);
+    }
+    ofEndShape(false);
+    
+    // Graphical Interface
+    ofSetColor(255);
+    ofDrawBitmapString("FrameRate: " + ofToString(ofGetFrameRate()), 4, 40);
+    ofDrawBitmapString("Volume:    " + ofToString(scaledVol * 100.0, 0), 4, 20);
+    ofDrawBitmapString("Tempo:     " + ofToString(tempo), 4, 60);
+    
 }
 
 
@@ -70,6 +104,10 @@ void ofApp::audioIn(float * input, int bufferSize, int nChannels){
     
     float curVol = 0.0;
     
+    // samples are "interleaved"
+    int numCounted = 0;
+    
+    // lets go through each sample and calculate the root mean square which is a rough way to calculate volume
     for (int i = 0; i < bufferSize; i++){
         
         left[i]	= input[i*2]*0.5;
@@ -77,9 +115,19 @@ void ofApp::audioIn(float * input, int bufferSize, int nChannels){
         
         curVol += left[i] * left[i];
         curVol += right[i] * right[i];
+        numCounted += 2;
     }
     
-    volume = curVol;
+    //this is how we get the mean of rms :)
+    curVol /= (float)numCounted;
+    
+    // this is how we get the root of rms :)
+    curVol = sqrt( curVol );
+    
+    volume *= 0.93;
+    volume += 0.07 * curVol;
+    
+    bufferCounter++;
 }
 
 void ofApp::audioOut(ofSoundBuffer & output){

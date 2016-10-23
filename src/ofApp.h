@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxGui.h"
 #include "ofxAbletonLive.h"
 
 class ofApp : public ofBaseApp{
@@ -14,12 +15,14 @@ public:
     void audioOut(ofSoundBuffer & output);  // function for audio in
     
     
+
+    
     //STANDARD Variables
-    vector <float> left; // the left channel
-    vector <float> right; // the right channel
-    float volume;
-    float scaledVol;
+    
     float tempo;
+    
+    float HEIGHT;
+    float WIDTH;
     
     // Ableton Add-on Variables
     ofxAbletonLive live;
@@ -29,6 +32,16 @@ public:
     // Sound / FFT
     ofSoundDevice soundDevice;  // this shit doesn't work
     ofSoundStream soundStream;
+    
+    vector <float> left; // the left channel
+    vector <float> right; // the right channel
+    
+    int bufferSize;
+    int bufferCounter;
+    int drawCounter;
+    float volume;
+    float scaledVol;
+    vector <float> volHistory;
 };
 
 
