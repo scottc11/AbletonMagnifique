@@ -4,6 +4,11 @@
 #include "ofxGui.h"
 #include "ofxAbletonLive.h"
 
+// CLASSES
+#include "HistographClass.hpp"
+
+
+
 class ofApp : public ofBaseApp{
     
 public:
@@ -20,9 +25,10 @@ public:
     //STANDARD Variables
     
     float tempo;
-    
     float HEIGHT;
     float WIDTH;
+    
+    Histograph histograph;
     
     // Ableton Add-on Variables
     ofxAbletonLive live;

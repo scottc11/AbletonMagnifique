@@ -7,6 +7,7 @@ void ofApp::setup(){
     HEIGHT = ofGetWindowHeight();
     WIDTH = ofGetWindowWidth();
     
+    
     // ABLETON LIVE ADD-ON
     live.setup();
     
@@ -14,8 +15,8 @@ void ofApp::setup(){
     int numTracks = live.getNumTracks();
     // ofxAbletonLiveTrack *track = live.getTrack(1);
     
-    
-
+    // HISTOGRAPH of volume
+    histograph.setup(WIDTH/3, (WIDTH/3 + (WIDTH/3)), 70);
     
     // setting the tempo
     live.setTempo(132);
@@ -59,13 +60,7 @@ void ofApp::update(){
     live.update();
     scaledVol = ofMap(volume, 0.0, 0.17, 0.0, 1.0, true);
     
-    // record the volume into an array
-    volHistory.push_back( scaledVol );
-    
-    // if volHistory is bigger than the size we want to record - drop the oldest value
-    if( volHistory.size() >= 400 ){
-        volHistory.erase(volHistory.begin(), volHistory.begin()+1);
-    }
+    histograph.update(scaledVol);
     
 }
 
@@ -78,16 +73,9 @@ void ofApp::draw(){
     ofFill();
     ofDrawCircle(WIDTH/2, HEIGHT/2, scaledVol * 190.0f);
     
-    // draw the volume history as a graph
-    ofBeginShape();
-    for (unsigned int i = 0; i < volHistory.size(); i++){
-        if( i == 0 ) ofVertex(i, 400);
-        
-        ofVertex(i, 400 - volHistory[i] * 70);
-        
-        if( i == volHistory.size() -1 ) ofVertex(i, 400);
-    }
-    ofEndShape(false);
+    
+    histograph.draw();
+    
     
     // Graphical Interface
     ofSetColor(255);
