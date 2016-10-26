@@ -58,6 +58,7 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
     live.update();
+    tempo = live.getTempo();
     scaledVol = ofMap(volume, 0.0, 0.17, 0.0, 1.0, true);
     
     histograph.update(scaledVol);
