@@ -32,7 +32,7 @@ void Histograph::update(float scaledVol) {
 void Histograph::draw() {
     
     // draw the volume history as a graph
-    
+    ofSetColor(255);
     ofBeginShape();
         for (unsigned int i = 0; i < volHistory.size(); i++){
             if( i == 0 ) ofVertex(startX + i, startY);

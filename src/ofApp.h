@@ -1,47 +1,58 @@
 #pragma once
 
+
 #include "ofMain.h"
 #include "ofxGui.h"
 #include "ofxAbletonLive.h"
+#include "ofxMidi.h"
+
 
 // CLASSES
 #include "HistographClass.hpp"
+#include "Peripherals.hpp"
+#include "volumeEllipse.hpp"
 
 
+class ofApp : public ofBaseApp {
 
-class ofApp : public ofBaseApp{
-    
 public:
     void setup();
     void update();
     void draw();
-    
+
     void audioIn(float * input, int bufferSize, int nChannels);  // function for audio in
     void audioOut(ofSoundBuffer & output);  // function for audio in
-    
-    
 
-    
+
+
+
     //STANDARD Variables
-    
+
     float tempo;
     float HEIGHT;
     float WIDTH;
-    
+
     Histograph histograph;
-    
+    Peripherals peripherals;
+    VolumeEllipse volumeEllipse;
+
     // Ableton Add-on Variables
     ofxAbletonLive live;
     ofxAbletonLiveTrack *track; // This is a work in progress
-    
-    
+
+
+    // MIDI
+    ofxMidiIn midiIn;
+    ofxMidiMessage midiMessage;
+
+
     // Sound / FFT
     ofSoundDevice soundDevice;  // this shit doesn't work
     ofSoundStream soundStream;
-    
+
     vector <float> left; // the left channel
     vector <float> right; // the right channel
-    
+
     int bufferSize;
     int bufferCounter;
     int drawCounter;
