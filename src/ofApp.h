@@ -11,6 +11,7 @@
 #include "HistographClass.hpp"
 #include "Peripherals.hpp"
 #include "volumeEllipse.hpp"
+#include "TerrainClass.hpp"
 
 
 class ofApp : public ofBaseApp {
@@ -35,6 +36,7 @@ public:
     Histograph histograph;
     Peripherals peripherals;
     VolumeEllipse volumeEllipse;
+    Terrain terrain;
 
     // Ableton Add-on Variables
     ofxAbletonLive live;
@@ -75,3 +77,6 @@ public:
 // system preferences -> Sound -> and set your audio output to Soundflower (ch2).
 // Sometimes it can be finicky, so 'un-setting' and then 're-setting' the Motu 4pre
 // as a sound source will fix the issue.
+
+// ofRotate()
+// http://openframeworks.cc/documentation/graphics/ofGraphics/#show_ofRotate

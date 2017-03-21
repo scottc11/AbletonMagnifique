@@ -18,7 +18,12 @@ void ofApp::setup(){
     // HISTOGRAPH of volume
     histograph.setup(WIDTH/3, (WIDTH/3 + (WIDTH/3)), 70);
 
+    // VolumeEllipse
     volumeEllipse.setup(WIDTH/2, HEIGHT/2);
+
+
+    // TERRAIN
+    terrain.setup();
 
     // setting the tempo
     live.setTempo(132);
@@ -80,18 +85,26 @@ void ofApp::update(){
     scaledVol = ofMap(volume, 0.0, 0.17, 0.0, 1.0, true);
 
 //    volumeEllipse.update(scaledVol);
-    histograph.update(scaledVol);
+//    histograph.update(scaledVol);
     peripherals.update(scaledVol, tempo);
 
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-
-    
-//    volumeEllipse.draw();
     peripherals.draw();
-    histograph.draw();
+
+
+    ofTranslate(WIDTH/2, HEIGHT/2, 0);
+    ofRotateX(60);
+    ofTranslate(-WIDTH/2, -HEIGHT/2, 0);
+
+    terrain.draw();
+
+//    volumeEllipse.draw();
+//    histograph.draw();
+    
+
 
 }
 
